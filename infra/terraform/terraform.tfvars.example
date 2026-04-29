@@ -1,0 +1,13 @@
+project                 = "securecallops"
+environment             = "dev"
+location                = "uksouth"
+container_image         = "replace-with-created-acr-login-server/securecallops:latest"
+postgres_admin_user     = "securecallops"
+postgres_admin_password = "replace-with-a-strong-password"
+allow_azure_services_to_postgres = false
+fernet_key              = "replace-with-output-from-scripts-generate-fernet-key"
+smtp_host               = "smtp.example.com"
+smtp_port               = 587
+smtp_user               = "noreply@example.com"
+smtp_password           = "replace-with-smtp-password"
+smtp_from               = "noreply@example.com"

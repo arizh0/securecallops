@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SecureCallOps - Sign In</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f6f7f1;
+      --card: #ffffff;
+      --ink: #182118;
+      --muted: #5a6659;
+      --line: #d7dfcf;
+      --accent: #295f3a;
+      --accent-light: #dbe9d7;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background:
+        radial-gradient(circle at 15% 15%, #eaf2d7 0, transparent 35%),
+        radial-gradient(circle at 85% 20%, #ddebd8 0, transparent 40%),
+        linear-gradient(160deg, #f6f7f1, #eef3ea);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    .card {
+      width: min(480px, 100%);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px 24px 24px;
+      box-shadow: 0 18px 50px rgba(20,32,20,.08);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .logo-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .logo-text { font-weight: 700; font-size: 17px; color: var(--accent); }
+    h1 { margin: 0 0 6px; font-size: 26px; line-height: 1.15; }
+    p  { margin: 0 0 8px; color: var(--muted); font-size: 15px; line-height: 1.5; }
+    .panel {
+      margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      background: #fbfcfa;
+    }
+    input[type=email] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      color: var(--ink);
+      background: #fff;
+    }
+    input[type=email]:focus { border-color: var(--accent); }
+    input[type=text] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 22px;
+      letter-spacing: .25em;
+      text-align: center;
+      outline: none;
+      color: var(--ink);
+      background: #fff;
+    }
+    input[type=text]:focus { border-color: var(--accent); }
+    .btn-primary {
+      margin-top: 10px;
+      width: 100%;
+      padding: 11px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-primary:disabled { opacity: .6; cursor: default; }
+    .btn-back {
+      margin-top: 8px;
+      width: 100%;
+      padding: 8px;
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .status {
+      margin-top: 12px;
+      min-height: 18px;
+      font-size: 14px;
+      color: var(--muted);
+      text-align: center;
+    }
+    .status.error {
+      color: #8d1f1f;
+      background: #fff0f0;
+      border: 1px solid #f2c8c8;
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .hint {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0 0 10px;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">SecureCallOps</span>
+    </div>
+
+    <h1>Caller sign-in</h1>
+
+    <div id="step-email" class="panel">
+      <input type="email" id="email" placeholder="your@email.com" autocomplete="email" />
+      <button class="btn-primary" id="btn-request">Send code</button>
+      <div id="status" class="status"></div>
+    </div>
+
+    <div id="step-code" class="panel" style="display:none;">
+      <p class="hint">Check your email for a 6-digit code.</p>
+      <input type="text" id="code" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code" />
+      <button class="btn-primary" id="btn-verify">Sign in</button>
+      <div id="status2" class="status"></div>
+      <button class="btn-back" id="btn-back">&#8592; Back</button>
+    </div>
+
+  </main>
+
+  <script src="/pb/static/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SecureCallOps Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f4f6f0; --card: #fff; --ink: #182118; --muted: #5a6659;
+      --line: #d7dfcf; --accent: #295f3a; --accent-hover: #1e4a2c;
+      --accent-light: #dbe9d7; --red: #8d1f1f; --red-bg: #fff0f0; --red-line: #f2c8c8;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink);
+           font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+
+    /* Header */
+    header {
+      background: var(--accent); color: #fff; padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .hd-left { display: flex; align-items: center; gap: 10px; }
+    .hd-logo { font-weight: 700; font-size: 16px; }
+    .hd-badge {
+      background: rgba(255,255,255,.2); font-size: 11px; font-weight: 700;
+      border-radius: 6px; padding: 2px 8px; letter-spacing: .04em; text-transform: uppercase;
+    }
+    .hd-right { display: flex; align-items: center; gap: 10px; font-size: 13px; opacity: .88; }
+    .btn-logout {
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
+      color: #fff; border-radius: 20px; padding: 4px 12px; font-size: 13px; cursor: pointer;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,.25); }
+
+    /* Nav tabs */
+    nav {
+      background: var(--card); border-bottom: 1px solid var(--line);
+      padding: 0 24px; display: flex; gap: 0;
+    }
+    .tab {
+      padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
+      border-bottom: 3px solid transparent; color: var(--muted); white-space: nowrap;
+    }
+    .tab:hover { color: var(--ink); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* Content */
+    main { max-width: 1000px; margin: 0 auto; padding: 28px 20px 60px; }
+    .pane { display: none; }
+    .pane.active { display: block; }
+
+    /* Stats */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px; margin-bottom: 28px;
+    }
+    .stat {
+      background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+      padding: 16px 14px; text-align: center;
+    }
+    .stat-num { font-size: 30px; font-weight: 700; color: var(--accent); line-height: 1; }
+    .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .04em; }
+
+    /* Card */
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+      padding: 20px; box-shadow: 0 2px 12px rgba(20,32,20,.05); margin-bottom: 20px;
+    }
+    h2 { margin: 0 0 14px; font-size: 17px; }
+    h3 { margin: 0 0 10px; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+
+    /* Forms */
+    label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px; }
+    input[type=email], input[type=text] {
+      width: 100%; border: 1px solid var(--line); border-radius: 8px;
+      padding: 9px 11px; font-size: 14px; font-family: inherit; background: #fafcf9;
+    }
+    input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+    input[type=file] {
+      border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px;
+      font-size: 13px; background: #fafcf9; width: 100%;
+    }
+
+    .row { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 12px; }
+    .row > * { flex: 1; min-width: 0; }
+    .row > .btn { flex: 0 0 auto; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px;
+      border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: background .15s; white-space: nowrap; text-decoration: none;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: var(--accent-light); color: var(--accent); border: 1px solid #c8dcc3; }
+    .btn-secondary:hover { background: #cce3c7; }
+    .btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-line); }
+    .btn-danger:hover { background: #ffe5e5; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* Messages */
+    .msg { margin-top: 10px; font-size: 13px; padding: 8px 10px; border-radius: 8px; display: none; }
+    .msg.ok  { background: var(--accent-light); color: var(--accent); }
+    .msg.err { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-line); }
+
+    /* People lists */
+    .people-list { list-style: none; margin: 0; padding: 0; }
+    .person-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px;
+    }
+    .person-item:last-child { border: none; }
+    .person-email { font-weight: 500; }
+    .person-meta  { font-size: 12px; color: var(--muted); }
+
+    /* Results table */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      text-align: left; padding: 8px 10px; background: #f3f6f0;
+      border-bottom: 2px solid var(--line); font-size: 11px; text-transform: uppercase;
+      letter-spacing: .04em; color: var(--muted);
+    }
+    td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    tr:last-child td { border: none; }
+    tr:hover td { background: #fafcf8; }
+
+    .badge-outcome {
+      display: inline-block; border-radius: 6px; padding: 2px 8px;
+      font-size: 11px; font-weight: 700;
+    }
+    .badge-answered     { background: #d4edda; color: #155724; }
+    .badge-not_answered { background: #fff3cd; color: #856404; }
+    .badge-refused      { background: var(--red-bg); color: var(--red); }
+
+    .pagination { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 14px; }
+
+    @media(max-width: 600px) {
+      nav { gap: 0; overflow-x: auto; }
+      .tab { font-size: 13px; padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body data-admin-email="{{ admin_email }}">
+
+<header>
+  <div class="hd-left">
+    <span class="hd-logo">&#9899; SecureCallOps</span>
+    <span class="hd-badge">Admin</span>
+  </div>
+  <div class="hd-right">
+    <span>{{ admin_email }}</span>
+    <button class="btn-logout">Sign out</button>
+  </div>
+</header>
+
+<nav id="nav">
+  <div class="tab active" data-pane="overview">Overview</div>
+  <div class="tab" data-pane="contacts">Contacts</div>
+  <div class="tab" data-pane="results">Results</div>
+  <div class="tab" data-pane="volunteers">Callers</div>
+</nav>
+
+<main>
+
+  <!-- Overview ──────────────────────────────────────────────────────────── -->
+  <div class="pane active" id="pane-overview">
+    <div class="stats-grid" id="stats-grid">
+      <!-- filled by JS -->
+      <div class="stat"><div class="stat-num">…</div><div class="stat-label">Total</div></div>
+    </div>
+  </div>
+
+  <!-- Contacts ─────────────────────────────────────────────────────────── -->
+  <div class="pane" id="pane-contacts">
+    <div class="card">
+      <h2>Upload contacts</h2>
+      <form id="upload-form">
+        <div style="margin-bottom:10px;">
+          <input type="file" id="csv-file" accept=".csv,text/csv" required />
+        </div>
+        <button type="submit" class="btn btn-primary" id="upload-btn">Upload contacts</button>
+      </form>
+      <div id="upload-msg" class="msg"></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <h2 style="margin:0;">Contact list</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Phone</th><th>Status</th><th>Calls</th><th>Last outcome</th></tr>
+          </thead>
+          <tbody id="contacts-body">
+            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button class="btn btn-secondary" id="contacts-prev-btn" disabled>← Prev</button>
+        <span id="contacts-page-info">—</span>
+        <button class="btn btn-secondary" id="contacts-next-btn" disabled>Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results ──────────────────────────────────────────────────────────── -->
+  <div class="pane" id="pane-results">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <h2 style="margin:0;">Call results</h2>
+        <a class="btn btn-secondary" href="/api/results/export.csv" download="pb_results.csv">
+          &#8595; Export CSV
+        </a>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Phone</th><th>Caller</th><th>Outcome</th><th>Comments</th><th>Submitted</th></tr>
+          </thead>
+          <tbody id="results-body">
+            <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button class="btn btn-secondary" id="prev-btn" disabled>← Prev</button>
+        <span id="page-info">—</span>
+        <button class="btn btn-secondary" id="next-btn" disabled>Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Callers ──────────────────────────────────────────────────────────── -->
+  <div class="pane" id="pane-volunteers">
+    <div class="card">
+      <h2>Authorised callers</h2>
+      <div class="row">
+        <div style="flex:2;"><input type="email" id="new-vol" placeholder="caller@example.com" /></div>
+        <div style="flex:1;">
+          <label style="font-size:11px;color:var(--muted);margin-bottom:3px;display:block;">Expires (optional)</label>
+          <input type="date" id="new-vol-expiry" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:14px;background:#fafcf9;" />
+        </div>
+        <button class="btn btn-primary" id="add-vol-btn">Add</button>
+      </div>
+      <div id="vol-msg" class="msg"></div>
+      <ul class="people-list" id="vol-list">
+        <li style="font-size:13px;color:var(--muted);">Loading…</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<script src="/static/admin.js"></script>
+</body>
+</html>

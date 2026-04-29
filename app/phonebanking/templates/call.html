@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SecureCallOps</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f4f6f0;
+      --card: #ffffff;
+      --ink: #182118;
+      --muted: #5a6659;
+      --line: #d7dfcf;
+      --accent: #295f3a;
+      --accent-hover: #1e4a2c;
+      --accent-light: #dbe9d7;
+      --red: #8d1f1f;
+      --red-bg: #fff0f0;
+      --red-line: #f2c8c8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────────── */
+    header {
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .header-logo { font-weight: 700; font-size: 16px; letter-spacing: .01em; }
+    .header-right { display: flex; align-items: center; gap: 10px; font-size: 14px; opacity: .88; }
+    .btn-logout {
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      color: #fff;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,.25); }
+
+    /* ── Main content ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 28px 16px 40px;
+    }
+
+    .panel {
+      width: min(920px, 100%);
+    }
+
+    /* ── State sections ──────────────────────────────────────────────────── */
+    .state { display: none; }
+    .state.active { display: block; }
+
+    /* ── Idle ────────────────────────────────────────────────────────────── */
+    .idle-wrap {
+      text-align: center;
+      padding: 40px 0 24px;
+    }
+    .idle-wrap h2 { margin: 0 0 8px; font-size: 22px; }
+    .idle-wrap p  { margin: 0 0 24px; color: var(--muted); }
+
+    /* ── Loading ─────────────────────────────────────────────────────────── */
+    .loading-wrap {
+      text-align: center;
+      padding: 60px 0;
+    }
+    .spinner {
+      display: inline-block;
+      width: 36px; height: 36px;
+      border: 3px solid var(--accent-light);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Contact card ────────────────────────────────────────────────────── */
+    .contact-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 24px 20px 20px;
+      box-shadow: 0 4px 20px rgba(20,32,20,.06);
+      margin-bottom: 16px;
+    }
+    .name-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .name-image-wrap {
+      background: #f8fbf7;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: clamp(4px, 1vw, 8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      overflow: hidden;
+      /* prevent selection / long-press save */
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    #name-img {
+      width: 100%;
+      max-width: 100%;
+      aspect-ratio: 10 / 3;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      pointer-events: none; /* disable right-click / drag */
+    }
+
+    .btn-call {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-call:hover { background: var(--accent-hover); }
+    .btn-call .call-icon { font-size: 22px; }
+
+    /* ── Outcome section ─────────────────────────────────────────────────── */
+    .outcome-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(20,32,20,.06);
+    }
+    .outcome-card h3 { margin: 0 0 14px; font-size: 16px; }
+
+    .outcome-btns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .outcome-btn {
+      border: 2px solid var(--line);
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px 6px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      transition: border-color .15s, background .15s, color .15s;
+      line-height: 1.3;
+    }
+    .outcome-btn .ob-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+    .outcome-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .outcome-btn.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    textarea#comments {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--ink);
+      background: #fafcf9;
+      resize: vertical;
+      min-height: 72px;
+      margin-bottom: 14px;
+    }
+    textarea#comments:focus { outline: 2px solid var(--accent); border-color: transparent; }
+
+    .submit-error {
+      background: var(--red-bg);
+      border: 1px solid var(--red-line);
+      color: var(--red);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 14px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    /* ── Cooldown ─────────────────────────────────────────────────────────── */
+    .cooldown-wrap {
+      text-align: center;
+      padding: 40px 0 24px;
+    }
+    .cooldown-ring {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .cooldown-ring svg { transform: rotate(-90deg); }
+    .cooldown-ring .ring-bg { fill: none; stroke: var(--accent-light); stroke-width: 5; }
+    .cooldown-ring .ring-fill {
+      fill: none; stroke: var(--accent); stroke-width: 5;
+      stroke-linecap: round;
+      transition: stroke-dashoffset .9s linear;
+    }
+    .cooldown-num {
+      position: absolute;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .cooldown-wrap p { color: var(--muted); margin: 0 0 20px; }
+
+    /* ── Exhausted ────────────────────────────────────────────────────────── */
+    .exhausted-wrap {
+      text-align: center;
+      padding: 60px 0 24px;
+    }
+    .exhausted-wrap .big-tick { font-size: 56px; margin-bottom: 12px; }
+    .exhausted-wrap h2 { margin: 0 0 8px; }
+    .exhausted-wrap p  { color: var(--muted); }
+
+    /* ── Shared button ────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+    .btn-primary:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 400px) {
+      .outcome-btns { grid-template-columns: 1fr; }
+      .outcome-btn { display: flex; align-items: center; gap: 10px; padding: 12px; }
+      .outcome-btn .ob-icon { font-size: 20px; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="header-logo">&#9899; SecureCallOps</span>
+  <div class="header-right">
+    <span id="vol-name">{{ volunteer_name }}</span>
+    <button class="btn-logout">Sign out</button>
+  </div>
+</header>
+
+<main>
+  <div class="panel">
+
+    <!-- IDLE ---------------------------------------------------------------->
+    <div id="state-idle" class="state">
+      <div class="idle-wrap">
+        <h2>Ready to make calls?</h2>
+        <button class="btn-primary">Get next contact</button>
+      </div>
+    </div>
+
+    <!-- LOADING ------------------------------------------------------------->
+    <div id="state-loading" class="state">
+      <div class="loading-wrap">
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <!-- ASSIGNED ------------------------------------------------------------>
+    <div id="state-assigned" class="state">
+
+      <div class="contact-card">
+        <div class="name-label">Contact name</div>
+        <div class="name-image-wrap" id="name-wrap">
+          <!--
+            The image is served server-side as a PNG.
+            pointer-events:none disables right-click/drag.
+            oncontextmenu prevents the browser context menu.
+            draggable="false" prevents drag-to-desktop.
+          -->
+          <img id="name-img"
+               src=""
+               alt=""
+               draggable="false"
+               tabindex="-1"
+          />
+        </div>
+
+        <a id="call-btn"
+           class="btn-call"
+           href="#"
+          >
+          <span class="call-icon">&#128222;</span>
+          <span>Call now</span>
+        </a>
+      </div>
+
+      <div class="outcome-card">
+        <h3>How did the call go?</h3>
+
+        <div class="outcome-btns">
+          <button class="outcome-btn" data-value="answered"
+                 >
+            <span class="ob-icon">&#9989;</span>Answered
+          </button>
+          <button class="outcome-btn" data-value="not_answered"
+                 >
+            <span class="ob-icon">&#128222;&#65039;</span>No answer
+          </button>
+          <button class="outcome-btn" data-value="refused"
+                 >
+            <span class="ob-icon">&#10060;</span>Refused
+          </button>
+        </div>
+
+        <textarea id="comments" placeholder="Notes (optional)…" rows="3"></textarea>
+
+        <div id="submit-error" class="submit-error"></div>
+
+        <button class="btn-primary" id="submit-btn">
+          Submit &amp; continue
+        </button>
+      </div>
+    </div>
+
+    <!-- COOLDOWN ------------------------------------------------------------>
+    <div id="state-cooldown" class="state">
+      <div class="cooldown-wrap">
+        <div class="cooldown-ring">
+          <svg width="90" height="90" viewBox="0 0 90 90">
+            <circle class="ring-bg"   cx="45" cy="45" r="38"/>
+            <circle class="ring-fill" id="ring-fill" cx="45" cy="45" r="38"
+                    stroke-dasharray="238.76"
+                    stroke-dashoffset="0"/>
+          </svg>
+          <span class="cooldown-num" id="countdown-num">20</span>
+        </div>
+        <p>Next contact available shortly…</p>
+        <button class="btn-primary" id="cooldown-btn" disabled>
+          Get next contact (<span id="countdown-label">20</span>s)
+        </button>
+      </div>
+    </div>
+
+    <!-- EXHAUSTED ----------------------------------------------------------->
+    <div id="state-exhausted" class="state">
+      <div class="exhausted-wrap">
+        <div class="big-tick">&#127881;</div>
+        <h2>All contacts called!</h2>
+        <p>There are no more contacts to call right now.<br>Thank you for your hard work today.</p>
+      </div>
+    </div>
+
+  </div><!-- .panel -->
+</main>
+
+<script src="/pb/static/call.js"></script>
+</body>
+</html>

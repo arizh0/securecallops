@@ -1,0 +1,72 @@
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local databases / dumps
+*.db
+*.sqlite
+*.sqlite3
+*.sqlitedb
+*.dump
+
+# Test / tooling caches
+.pytest_cache/
+pytest-cache-files-*/
+.mypy_cache/
+.ruff_cache/
+.cache/
+.tmp/
+.coverage
+.coverage.*
+htmlcov/
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+
+# Terraform local state and plans
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+terraform.tfvars
+terraform.tfvars.json
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Local logs
+*.log
+
+# Claude Code local state
+.claude/
+
+# Potentially sensitive exports (keep sanitized fixtures separately)
+*.csv
+!samples/
+!samples/contacts.example.csv
+samples/*_export.csv

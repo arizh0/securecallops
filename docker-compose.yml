@@ -1,0 +1,78 @@
+name: securecallops
+
+services:
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${OPS_DB_USER:?Set OPS_DB_USER in .env}
+      POSTGRES_PASSWORD: ${OPS_DB_PASS:?Set OPS_DB_PASS in .env}
+      POSTGRES_DB: ${OPS_DB_NAME:?Set OPS_DB_NAME in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./app/sql/phonebanking_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${OPS_DB_USER:?Set OPS_DB_USER in .env} -d ${OPS_DB_NAME:?Set OPS_DB_NAME in .env}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  caller:
+    build: .
+    restart: unless-stopped
+    environment:
+      APP_MODULE: app.phonebanking.main:app
+      PORT: "8001"
+      OPS_DB_USER: ${OPS_DB_USER:?Set OPS_DB_USER in .env}
+      OPS_DB_PASS: ${OPS_DB_PASS:?Set OPS_DB_PASS in .env}
+      OPS_DB_NAME: ${OPS_DB_NAME:?Set OPS_DB_NAME in .env}
+      OPS_DB_HOST: db
+      OPS_DB_PORT: "5432"
+      OPS_DB_SSLMODE: ${OPS_DB_SSLMODE:-}
+      OPS_DB_POOL_MIN: "1"
+      OPS_DB_POOL_MAX: "10"
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      FERNET_KEY: ${FERNET_KEY:?Set FERNET_KEY in .env}
+      DEV_OTP_LOG: ${DEV_OTP_LOG:-false}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+    ports:
+      - "8001:8001"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  admin:
+    build: .
+    restart: unless-stopped
+    environment:
+      APP_MODULE: app.admin.main:app
+      PORT: "8002"
+      OPS_DB_USER: ${OPS_DB_USER:?Set OPS_DB_USER in .env}
+      OPS_DB_PASS: ${OPS_DB_PASS:?Set OPS_DB_PASS in .env}
+      OPS_DB_NAME: ${OPS_DB_NAME:?Set OPS_DB_NAME in .env}
+      OPS_DB_HOST: db
+      OPS_DB_PORT: "5432"
+      OPS_DB_SSLMODE: ${OPS_DB_SSLMODE:-}
+      OPS_DB_POOL_MIN: "1"
+      OPS_DB_POOL_MAX: "10"
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      FERNET_KEY: ${FERNET_KEY:?Set FERNET_KEY in .env}
+      DEV_OTP_LOG: ${DEV_OTP_LOG:-false}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+    ports:
+      - "8002:8002"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
