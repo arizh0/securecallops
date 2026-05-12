@@ -4,6 +4,8 @@ SecureCallOps is a phone outreach app for teams that do not want to hand every c
 
 The core rule is simple: a caller should only see the contact they are working on right now. Admins can still upload contacts, approve callers, and review outcomes.
 
+Read the build write-up on HackerNoon: [SecureCallOps: Building a Privacy-First Phone Banking Tool](https://hackernoon.com/securecallops-building-a-privacy-first-phone-banking-tool).
+
 ## Why This Project Exists
 
 Small organizations often start outreach work in shared spreadsheets. That is quick, but it also spreads names and phone numbers across inboxes, laptops, and chat channels. This app turns that spreadsheet into a controlled calling queue.
