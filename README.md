@@ -107,6 +107,19 @@ The repo includes a Terraform starter in [infra/terraform](infra/terraform) for 
 
 See [docs/azure-deployment.md](docs/azure-deployment.md).
 
+## AWS Deployment
+
+The repo also includes a sanitized Terraform starter in [infra/terraform-aws](infra/terraform-aws) for AWS:
+
+- Amazon ECR
+- Amazon ECS Fargate
+- Amazon RDS for PostgreSQL
+- AWS Secrets Manager
+- Application Load Balancers
+- CloudWatch Logs
+
+The GitHub Actions workflow supports AWS deployment with OIDC when repository variables are configured. See [docs/aws-deployment.md](docs/aws-deployment.md).
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

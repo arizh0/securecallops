@@ -1,0 +1,26 @@
+# Copy this file to terraform.tfvars and fill in real values.
+# Never commit terraform.tfvars.
+
+project     = "securecallops"
+environment = "dev"
+aws_region  = "eu-west-2"
+
+# Placeholder for the first apply. Replace with the real ECR image URI after
+# the first image has been pushed.
+container_image = "123456789012.dkr.ecr.eu-west-2.amazonaws.com/securecallops-dev:abc1234"
+
+postgres_admin_user     = "securecallops"
+postgres_admin_password = "CHANGE_ME_strong_password_here"
+
+# Generate with: python scripts/generate_fernet_key.py
+fernet_key = "CHANGE_ME_base64_fernet_key_here"
+
+smtp_host     = "smtp.example.com"
+smtp_port     = 587
+smtp_user     = "noreply@example.com"
+smtp_password = "CHANGE_ME_smtp_password_here"
+smtp_from     = "noreply@example.com"
+
+# Leave at 0 for the first apply, before the image is in ECR.
+# Change to 1 and apply again once the image has been pushed.
+service_desired_count = 0
