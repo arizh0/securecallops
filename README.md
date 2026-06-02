@@ -120,6 +120,18 @@ The repo also includes a sanitized Terraform starter in [infra/terraform-aws](in
 
 The GitHub Actions workflow supports AWS deployment with OIDC when repository variables are configured. See [docs/aws-deployment.md](docs/aws-deployment.md).
 
+## GCP GKE Deployment
+
+The repo includes a first-pass private GKE deployment template in [infra/gke](infra/gke):
+
+- Google Artifact Registry for the Docker image
+- Google Kubernetes Engine Autopilot for caller and admin services
+- Cloud SQL for PostgreSQL with private IP
+- Cloud SQL Auth Proxy sidecars
+- Private testing through `kubectl port-forward`
+
+See [docs/gcp-gke-deployment.md](docs/gcp-gke-deployment.md).
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
