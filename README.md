@@ -122,13 +122,17 @@ The GitHub Actions workflow supports AWS deployment with OIDC when repository va
 
 ## GCP GKE Deployment
 
-The repo includes a first-pass private GKE deployment template in [infra/gke](infra/gke):
+The repo includes a first-pass private GKE deployment template in [infra/gke](infra/gke).
+
+This is a Kubernetes learning milestone, not a full public production deployment. It runs the app privately in GKE and tests access with `kubectl port-forward` before adding public HTTPS, DNS, Ingress, or CI/CD.
 
 - Google Artifact Registry for the Docker image
 - Google Kubernetes Engine Autopilot for caller and admin services
 - Cloud SQL for PostgreSQL with private IP
 - Cloud SQL Auth Proxy sidecars
 - Private testing through `kubectl port-forward`
+
+Future production work would add managed HTTPS, DNS, Kubernetes Ingress, automated migrations, and GitHub Actions deployment through Workload Identity Federation.
 
 See [docs/gcp-gke-deployment.md](docs/gcp-gke-deployment.md).
 
